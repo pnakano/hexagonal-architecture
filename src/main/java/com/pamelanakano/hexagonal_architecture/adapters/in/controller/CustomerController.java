@@ -4,6 +4,7 @@ import com.pamelanakano.hexagonal_architecture.adapters.in.controller.mapper.Cus
 import com.pamelanakano.hexagonal_architecture.adapters.in.controller.request.CustomerRequest;
 import com.pamelanakano.hexagonal_architecture.adapters.in.controller.response.CustomerResponse;
 import com.pamelanakano.hexagonal_architecture.application.core.domain.Customer;
+import com.pamelanakano.hexagonal_architecture.application.ports.in.DeleteCustomerByIdInputPort;
 import com.pamelanakano.hexagonal_architecture.application.ports.in.FindCustomerByIdInputPort;
 import com.pamelanakano.hexagonal_architecture.application.ports.in.InsertCustomerInputPort;
 import com.pamelanakano.hexagonal_architecture.application.ports.in.UpdateCustomerInputPort;
@@ -17,16 +18,19 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
 
     @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
     private InsertCustomerInputPort insertCustomerInputPort;
 
     @Autowired
     private FindCustomerByIdInputPort findCustomerByIdInputPort;
 
     @Autowired
-    private CustomerMapper customerMapper;
+    private UpdateCustomerInputPort updateCustomerInputPort;
 
     @Autowired
-    private UpdateCustomerInputPort updateCustomerInputPort;
+    private DeleteCustomerByIdInputPort deleteCustomerByIdInputPort;
 
     @PostMapping
     public ResponseEntity<Void> insert(@Valid @RequestBody CustomerRequest customerRequest){
@@ -47,6 +51,12 @@ public class CustomerController {
         var customer = customerMapper.toCustomer(customerRequest);
         customer.setId(id);
         updateCustomerInputPort.update(customer, customerRequest.getZipCode());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable final String id){
+        deleteCustomerByIdInputPort.delete(id);
         return ResponseEntity.noContent().build();
     }
 
