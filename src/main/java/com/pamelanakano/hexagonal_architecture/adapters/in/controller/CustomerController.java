@@ -3,8 +3,10 @@ package com.pamelanakano.hexagonal_architecture.adapters.in.controller;
 import com.pamelanakano.hexagonal_architecture.adapters.in.controller.mapper.CustomerMapper;
 import com.pamelanakano.hexagonal_architecture.adapters.in.controller.request.CustomerRequest;
 import com.pamelanakano.hexagonal_architecture.adapters.in.controller.response.CustomerResponse;
+import com.pamelanakano.hexagonal_architecture.application.core.domain.Customer;
 import com.pamelanakano.hexagonal_architecture.application.ports.in.FindCustomerByIdInputPort;
 import com.pamelanakano.hexagonal_architecture.application.ports.in.InsertCustomerInputPort;
+import com.pamelanakano.hexagonal_architecture.application.ports.in.UpdateCustomerInputPort;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,9 @@ public class CustomerController {
     @Autowired
     private CustomerMapper customerMapper;
 
+    @Autowired
+    private UpdateCustomerInputPort updateCustomerInputPort;
+
     @PostMapping
     public ResponseEntity<Void> insert(@Valid @RequestBody CustomerRequest customerRequest){
         var customer = customerMapper.toCustomer(customerRequest);
@@ -35,6 +40,14 @@ public class CustomerController {
         var customer = findCustomerByIdInputPort.find(id);
         var customerResponse = customerMapper.toCustomerResponse(customer);
         return ResponseEntity.ok().body(customerResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable final String id, @Valid @RequestBody CustomerRequest customerRequest){
+        var customer = customerMapper.toCustomer(customerRequest);
+        customer.setId(id);
+        updateCustomerInputPort.update(customer, customerRequest.getZipCode());
+        return ResponseEntity.noContent().build();
     }
 
 }
