@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8081
 
 pamelanakano:
   client:
     address:
-      url: http://localhost:8082/addresses
+      url: http://host.docker.internal:8080/addresses
 
 spring:
   data:
