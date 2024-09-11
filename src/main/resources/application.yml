@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 pamelanakano:
   client:
     address:
@@ -6,4 +9,9 @@ pamelanakano:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/haxagonal
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      username: root
+      password: example
+      database: hexagonal
